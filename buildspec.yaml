@@ -1,28 +1,22 @@
 version: 0.2
 
 phases:
-  install:
-    runtime-versions:
-      java: corretto17
-    commands:
-      - echo "Installing SAM CLI"
-      - pip install aws-sam-cli
-
   build:
     commands:
-      - echo "Moving into Maven project"
+      - echo "Build Lambda"
       - cd uploads_notification
       - mvn clean package
+      - cd ..
 
   post_build:
-    commands:
-      - echo "Packaging SAM template"
-      - sam package \
-          --template-file ../template.yaml \
-          --s3-bucket vib-sam-artifacts-bucket \
-          --output-template-file packaged.yaml \
-          --no-progressbar
+  commands:
+    - echo "Packaging SAM"
+    - cd ..
+    - sam package \
+        --template-file template.yaml \
+        --s3-bucket vib-sam-artifacts-bucket \
+        --output-template-file packaged.yaml
 
 artifacts:
   files:
-    - uploads_notification/packaged.yaml
+    - packaged.yaml
