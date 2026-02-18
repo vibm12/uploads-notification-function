@@ -4,23 +4,24 @@ phases:
   install:
     runtime-versions:
       java: corretto17
-      python: 3.11
     commands:
       - echo "Installing AWS SAM CLI"
-      - pip install aws-sam-cli
+      - pip3 install aws-sam-cli
 
   build:
     commands:
-      - echo "Building SAM application"
-      - sam build
+      - echo "Running Maven with full logs"
+      - mvn -B -e clean package
+      - sam build --debug
 
   post_build:
     commands:
       - echo "Packaging SAM template"
-      - sam package \
-          --template-file template.yaml \
-          --s3-bucket vib-sam-artifacts-bucket \
-          --output-template-file packaged.yaml
+      - sam package
+        --template-file template.yaml
+        --s3-bucket vib-sam-artifacts-bucket
+        --output-template-file packaged.yaml
+        --no-progress
 
 artifacts:
   files:
