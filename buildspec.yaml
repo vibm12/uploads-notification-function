@@ -9,13 +9,13 @@ phases:
       - cd ..
 
   post_build:
-  commands:
-    - echo "Packaging SAM"
-    - cd ..
-    - sam package \
-        --template-file template.yaml \
-        --s3-bucket vib-sam-artifacts-bucket \
-        --output-template-file packaged.yaml
+    commands:
+      - echo "Packaging SAM"
+      - cd ..
+      - sam package \
+          --template-file template.yaml \
+          --s3-bucket vib-sam-artifacts-bucket \
+          --output-template-file packaged.yaml
 
 artifacts:
   files:
