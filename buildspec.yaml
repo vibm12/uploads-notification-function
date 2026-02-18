@@ -1,35 +1,27 @@
 version: 0.2
 
-env:
-  variables:
-    S3_BUCKET: vib-sam-artifacts-bucket
-    STACK_NAME: vib-sqs-sam
-
 phases:
   install:
     runtime-versions:
       java: corretto17
+      python: 3.11
     commands:
       - echo "Installing AWS SAM CLI"
       - pip install aws-sam-cli
 
-  pre_build:
-    commands:
-      - echo "Pre-build phase started"
-      - mvn clean package -DskipTests
-
   build:
     commands:
-      - echo "Packaging SAM application"
-      - sam package \
-          --template-file template.yaml \
-          --s3-bucket $S3_BUCKET \
-          --output-template-file packaged-template.yaml
+      - echo "Building SAM application"
+      - sam build
 
   post_build:
     commands:
-      - echo "Build completed successfully"
+      - echo "Packaging SAM template"
+      - sam package \
+          --template-file template.yaml \
+          --s3-bucket vib-sam-artifacts-bucket \
+          --output-template-file packaged.yaml
 
 artifacts:
   files:
-    - packaged-template.yaml
+    - packaged.yaml
