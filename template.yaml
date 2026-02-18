@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Uploads Notification SAM Application
+
+Globals:
+  Function:
+    Runtime: java17
+    Timeout: 30
+    MemorySize: 512
+
+Resources:
+
+  UploadsNotificationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: VibSqsApp-UploadsNotificationFunction
+      Handler: com.example.Handler::handleRequest
+      CodeUri: uploads_notification/
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            - Effect: Allow
+              Action:
+                - sqs:ReceiveMessage
+                - sqs:DeleteMessage
+                - sqs:GetQueueAttributes
+              Resource: arn:aws:sqs:ap-south-1:536816796922:VibSqsApp-UploadsNotificationQueue
+
+            - Effect: Allow
+              Action:
+                - sns:Publish
+              Resource: arn:aws:sns:ap-south-1:536816796922:VibSqsApp-UploadsNotificationTopic
+
+      Events:
+        SqsTrigger:
+          Type: SQS
+          Properties:
+            Queue: arn:aws:sqs:ap-south-1:536816796922:VibSqsApp-UploadsNotificationQueue
+            BatchSize: 5
